@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model object
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>HelloSignalR</title>
+</head>
+<body>
+
+<h1>Chat</h1>
+
+<div id="inputForm">
+    <input type="text" id="message"/>
+    <input type="button" id="sendButton" value="Send"/>
+</div>
+
+<ul id="messages">
+
+</ul>
+
+<script src="js/signalr-clientES5-1.0.0-alpha2-final.js"></script>
+
+<script>
+    let hubUrl = '@Context.Request.GetDisplayUrl()chat';
+
+    let hubConnection = new signalR.HubConnection(new signalR.HttpConnection(hubUrl));
+
+    var messagesContainer = document.getElementById('messages');
+
+    hubConnection.on("Send",
+        function (data) {
+            console.log(data);
+
+            const element = document.createElement('li');
+            element.innerHTML = data;
+
+            messages.appendChild(element);
+        }
+    );
+
+    document.getElementById('sendButton').addEventListener('click',
+        function() {
+            hubConnection.invoke("Send", document.getElementById("message").value);
+        });
+
+    hubConnection.start();
+
+</script>
+
+</body>
+</html>
